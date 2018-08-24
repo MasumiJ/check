@@ -1,0 +1,24 @@
+package market.dataanalysistool.jpa;
+
+import java.io.Serializable;
+import java.sql.Date;
+
+public class CloseValueAndDate implements Serializable{
+	private Double close_;
+	private ;
+	public Double getClose_() {
+		return close_;
+	}
+	public void setClose_(Double close_) {
+		this.close_ = close_;
+	}
+	public MarketPK getId() {
+		return id;
+	}
+	public void setId(MarketPK id) {
+		this.id = id;
+	}
+	
+	
+	
+}

@@ -1,0 +1,6 @@
+package market.dataanalysistool.jpa;
+
+public class CloseValueAndDate {
+	double close_;
+	Date 
+}

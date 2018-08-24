@@ -1,0 +1,11 @@
+package market.dataanalysistool.jpa;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class TickerCloseValues {
+	List<StockCloseValue> stockCloseValueList= new ArrayList<StockCloseValue>();
+	String startDate;
+	String endDate;
+	String ticker;
+}

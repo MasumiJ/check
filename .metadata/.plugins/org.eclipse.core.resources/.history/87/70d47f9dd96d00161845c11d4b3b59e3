@@ -1,0 +1,23 @@
+package market.dataanalysistool.jpa;
+
+import java.util.Date;
+
+public class CloseValueAndDate {
+	private Double close_;
+	private MarketPK id;
+	public Double getClose_() {
+		return close_;
+	}
+	public void setClose_(Double close_) {
+		this.close_ = close_;
+	}
+	public MarketPK getId() {
+		return id;
+	}
+	public void setId(MarketPK id) {
+		this.id = id;
+	}
+	
+	
+	
+}

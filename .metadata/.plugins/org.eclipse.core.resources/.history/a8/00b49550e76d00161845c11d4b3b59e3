@@ -1,0 +1,18 @@
+package market.dataanalysistool.jpa;
+
+import java.io.Serializable;
+import java.sql.Date;
+
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+public class CloseValueAndDate implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Double close_;
+	@Temporal(TemporalType.DATE)
+	private java.util.Date x_Date;
+	
+}

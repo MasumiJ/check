@@ -1,0 +1,23 @@
+package market.dataanalysistool.ejb;
+
+import java.util.List;
+
+import javax.ejb.Remote;
+
+import org.apache.activemq.artemis.utils.json.JSONException;
+import org.apache.activemq.artemis.utils.json.JSONObject;
+
+import market.dataanalysistool.jpa.CloseValueAndDate;
+import market.dataanalysistool.jpa.ListOfTickers;
+import market.dataanalysistool.jpa.Market;
+import market.dataanalysistool.jpa.TickerCloseValues;
+
+@Remote
+public interface StockStdAndPoorSessionBeanRemote {
+	public List<Point> getSimpleMovingAverages(String ticker, int timePeriod, PeriodOfTime t);
+	public List<Point> getExponentialMovingAverages(String ticker, int timePeriod, PeriodOfTime t);
+	public TickerCloseValues getPriceTrendByTime(String ticker, PeriodOfTime timePeriod);
+	public List<Market> getVolumeTrendByTime(String ticker, PeriodOfTime timePeriod);
+	public List<Market> getAllStocks();
+	public ListOfTickers getAllTickers();
+}

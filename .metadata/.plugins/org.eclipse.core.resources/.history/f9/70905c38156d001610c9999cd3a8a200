@@ -1,0 +1,16 @@
+/**
+ * 
+ */
+package market.dataanalysistool.web;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
+/**
+ * @author Grad80
+ *
+ */
+@ApplicationPath("/rest2")
+public class RestApplication2 extends Application {
+
+}

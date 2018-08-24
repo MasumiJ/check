@@ -1,0 +1,9 @@
+package market.dataanalysistool.jpa;
+
+public class MarketIndicators {
+	private double close;
+	private double high;
+	private double low;
+	private double open;
+	private int volume;
+}

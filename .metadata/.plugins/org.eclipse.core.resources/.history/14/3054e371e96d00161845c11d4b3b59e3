@@ -1,0 +1,24 @@
+package market.dataanalysistool.jpa;
+
+import java.io.Serializable;
+import java.sql.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+@Table(name="final_data")
+@NamedQuery(name="Market.queryCloseValues", query="SELECT m.close_,m.id.x_Date FROM Market m")
+public class CloseValueAndDate implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Double close_;
+	@Temporal(TemporalType.DATE)
+	private java.util.Date x_Date;
+	
+}

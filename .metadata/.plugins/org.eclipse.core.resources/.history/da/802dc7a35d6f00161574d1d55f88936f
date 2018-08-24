@@ -1,0 +1,346 @@
+package market.dataanalysistool.ejb;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
+
+import market.dataanalysistool.jpa.CloseValueAndDate;
+import market.dataanalysistool.jpa.DataPoint;
+import market.dataanalysistool.jpa.ListOfTickers;
+import market.dataanalysistool.jpa.Market;
+import market.dataanalysistool.jpa.StockInfo;
+import market.dataanalysistool.jpa.TickerCloseValues;
+import market.dataanalysistool.jpa.TypeAndSumOfVolume;
+
+/**
+ * Session Bean implementation class StockStdAndPoorSessionBean
+ */
+@Stateless
+@Remote(StockStdAndPoorSessionBeanRemote.class)
+@Local(StockStdAndPoorSessionBeanLocal.class)
+public class StockStdAndPoorSessionBean implements StockStdAndPoorSessionBeanRemote, StockStdAndPoorSessionBeanLocal {
+
+	private final int timePeriod = 7;
+
+	/**
+	 * Default constructor.
+	 */
+
+	@PersistenceContext(name = "MarketDataAnalysisToolJPA")
+	EntityManager em;
+
+	public StockStdAndPoorSessionBean() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public TickerCloseValues getPriceTrendByTime(String ticker, String start, String end) {
+		// TODO Auto-generated method stub
+
+		// validation of date
+		// setting of start and end dates for the query
+		Date startDate = null;
+		Date endDate = null;
+
+		String[] startDateComponents = start.split("-");
+
+		int startDay = Integer.parseInt(startDateComponents[0]);
+		int startMonth = Integer.parseInt(startDateComponents[1]);
+		int startYear = Integer.parseInt(startDateComponents[2]);
+
+		Calendar cal = Calendar.getInstance();
+
+		cal.set(startYear, startMonth - 1, startDay, 0, 0, 0);
+		startDate = cal.getTime();
+
+		String[] endDateComponents = end.split("-");
+
+		int endDay = Integer.parseInt(endDateComponents[0]);
+		int endMonth = Integer.parseInt(endDateComponents[1]);
+		int endYear = Integer.parseInt(endDateComponents[2]);
+
+		cal.set(endYear, endMonth - 1, endDay, 0, 0, 0);
+		endDate = cal.getTime();
+
+		TickerCloseValues tickerCloseValues = new TickerCloseValues();
+
+		System.out.println("Start date is :" + startDate);
+		System.out.println("End date is :" + endDate);
+
+		// generating query on database
+		@SuppressWarnings("unchecked")
+		TypedQuery<Object[]> query = (TypedQuery<Object[]>) em
+				.createQuery("SELECT m.close_,m.id.x_Date FROM Market m  WHERE m.id.ticker_ = '" + ticker
+						+ "' and m.id.x_Date BETWEEN :startDate AND :endDate")
+				.setParameter("startDate", startDate, TemporalType.DATE)
+				.setParameter("endDate", endDate, TemporalType.DATE);
+		List<Object[]> instances = (List<Object[]>) query.getResultList();
+
+		// System.out.println(instances.get(0)[1]);
+
+		// System.out.println("1111");
+		// System.out.println(instances.size());
+		// System.out.println("2222");
+		// return instances;
+
+		if (instances != null) {
+			List<DataPoint> closeValueAndDateList = new ArrayList<DataPoint>();
+
+			for (int i = 0; i < instances.size(); i++) {
+				System.out.println((Date) instances.get(i)[1]);
+				// System.out.println(instances.get(i)[1]);
+			}
+
+			for (int i = 0; i < instances.size(); i++) {
+				DataPoint dataPoint = new DataPoint();
+				dataPoint.setDate((int) dateToSerial(startDate, (Date) instances.get(i)[1]));
+				BigDecimal bd = (BigDecimal) instances.get(i)[0];
+				dataPoint.setyCoordinate(bd.doubleValue());
+				closeValueAndDateList.add(dataPoint);
+			}
+
+			tickerCloseValues.setStockCloseValueList(closeValueAndDateList);
+		}
+
+		return tickerCloseValues;
+	}
+
+	@Override
+	public List<Market> getVolumeTrendByTime(String ticker, PeriodOfTime timePeriod) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Market> getAllStocks() {
+		String sql = "SELECT m FROM Market AS m";
+		TypedQuery<Market> query = em.createQuery(sql, Market.class);
+
+		// Execute the query, and get a collection of products back.
+		List<Market> samples = query.getResultList();
+		return samples;
+	}
+
+	/*
+	 * @Override public Map<String, BigDecimal> getSimpleMovingAverages(MarketPK
+	 * stock, int timePeriod, PeriodOfTime t) { String sql =
+	 * "SELECT m FROM Market AS m WHERE m.id = " + stock; TypedQuery<Market>
+	 * query = em.createQuery(sql, Market.class);
+	 * 
+	 * // Execute the query, and get a collection of products back. List<Market>
+	 * samples = query.getResultList(); int i = 0; Map<String,BigDecimal> result
+	 * = new HashMap<String,BigDecimal>(); for (Market ob : samples) {
+	 * result.put(ob.getId().getDate(), ob.getHigh()); } // while
+	 * (sampleSet.iterator().hasNext()) { // if (sampleSet.size() <=
+	 * i+timePeriod) { // break; // } // double avg =
+	 * getAverageOfList(sampleSet.subList(i, i+timePeriod)); //
+	 * result.put((Date)(sampleSet.get(i)[0]),avg); // i++; // } return null;
+	 * //return result; }
+	 */
+	public double getAverageOfList(List<DataPoint> x) {
+		Double avg = (double) 0;
+		for (DataPoint a : x) {
+			avg = avg + a.getyCoordinate();
+		}
+		avg = avg / (x.size());
+		return avg;
+	}
+
+	@Override
+	public List<DataPoint> getExponentialMovingAverages(String ticker, String startDate, String endDate) {
+		// TODO Auto-generated method stub
+		TickerCloseValues dataSet = getPriceTrendByTime(ticker, startDate, endDate);
+		int i = 0;
+		List<DataPoint> workSet = dataSet.getStockCloseValueList();
+		List<DataPoint> result = new ArrayList<DataPoint>();
+
+		// get the first value of the ema set. this is a simple moving average
+		// of the first n elements of the set
+		double ema = getAverageOfList(workSet.subList(i, timePeriod));
+		DataPoint ob = new DataPoint();
+		ob.setDate(dataSet.getStockCloseValueList().get(timePeriod - 1).getDate());
+		ob.setyCoordinate(ema);
+		result.add(ob);
+		double multiplier = 2.0 / (timePeriod);
+		i++;
+		int lastIndex = timePeriod - 1;
+		for (DataPoint x : workSet) {
+			// the first value is already calculated
+			if (i == 1) {
+				i++;
+				continue;
+			}
+			if (workSet.size() == lastIndex) {
+				break;
+			}
+			ema = ((workSet.get(lastIndex).getyCoordinate() - result.get(i - 2).getyCoordinate()) * multiplier)
+					+ result.get(i - 2).getyCoordinate();
+			System.out.println(ema);
+			DataPoint dataPoint2 = new DataPoint();
+			dataPoint2.setDate(workSet.get(lastIndex).getDate());
+			dataPoint2.setyCoordinate(ema);
+			result.add(dataPoint2);
+			i++;
+			lastIndex++;
+		}
+		return result;
+	}
+
+	@Override
+	public List<DataPoint> getSimpleMovingAverages(String ticker, String startDate, String endDate) {
+		// TODO Auto-generated method stub
+		TickerCloseValues sampleSet = this.getPriceTrendByTime(ticker, startDate, endDate);
+		int i = 0;
+		int lastIndex = timePeriod - 1;
+		List<DataPoint> result = new ArrayList<DataPoint>();
+		while (lastIndex < sampleSet.getStockCloseValueList().size()) {
+			DataPoint ob = new DataPoint();
+			List<DataPoint> dataPoints = sampleSet.getStockCloseValueList().subList(i, lastIndex);
+			ob.setDate(dataPoints.get(timePeriod - 1).getDate());
+			ob.setyCoordinate(getAverageOfList(dataPoints));
+			result.add(ob);
+			i++;
+			lastIndex++;
+		}
+		return result;
+	}
+
+	@Override
+	public List<DataPoint> getDeviationFromMovingAverages(String ticker, String startDate, String endDate,
+			int averageFlag) {
+		List<DataPoint> result = new ArrayList<DataPoint>();
+		List<DataPoint> workSet = new ArrayList<DataPoint>();
+		TickerCloseValues prices = getPriceTrendByTime(ticker, startDate, endDate);
+		// to switch between calculating with simple and exponential moving
+		// averages
+		switch (averageFlag) {
+		// using the simple moving averages
+		case 0:
+			workSet = getSimpleMovingAverages(ticker, startDate, endDate);
+			break;
+
+		// using exponential moving averages
+		case 1:
+		default:
+			workSet = getExponentialMovingAverages(ticker, startDate, endDate);
+		}
+		int i = 0;
+		for (DataPoint x : workSet) {
+			double deviation = prices.getStockCloseValueList().get(i + timePeriod).getyCoordinate()
+					- workSet.get(i).getyCoordinate();
+			DataPoint dataPoint = new DataPoint();
+			dataPoint.setDate(x.getDate());
+			dataPoint.setyCoordinate(deviation);
+			result.add(dataPoint);
+			i++;
+		}
+
+		return result;
+	}
+
+	@Override
+	public List<String> getAllTickers() {
+		@SuppressWarnings("unchecked")
+		TypedQuery<String> query = (TypedQuery<String>) em.createQuery("SELECT DISTINCT m.id.ticker_ FROM Market as m");
+
+		List<String> result = query.getResultList();
+		System.out.println(result.size());
+
+		return result;
+	}
+
+	public List<TypeAndSumOfVolume> volumeTrendByCategory(String period) {
+
+		Date startDate = null;
+		Date endDate = null;
+		Calendar cal = Calendar.getInstance();
+
+		switch (period) {
+		case "Q1":
+			cal.set(2009, 3, 1, 0, 0, 0);
+			startDate = cal.getTime();
+			cal.set(2009, 5, 30, 0, 0, 0);
+			endDate = cal.getTime();
+			System.out.println("in first quarter");
+			break;
+
+		case "Q2":
+			cal.set(2009, 6, 1, 0, 0, 0);
+			startDate = cal.getTime();
+			cal.set(2009, 8, 30, 0, 0, 0);
+			endDate = cal.getTime();
+			System.out.println("in second quarter");
+			break;
+
+		case "Q3":
+			cal.set(2009, 9, 1, 0, 0, 0);
+			startDate = cal.getTime();
+			cal.set(2009, 11, 31, 0, 0, 0);
+			endDate = cal.getTime();
+			System.out.println("in third quarter");
+			break;
+
+		case "Q4":
+			cal.set(2010, 0, 1, 0, 0, 0);
+			startDate = cal.getTime();
+			cal.set(2010, 2, 31, 0, 0, 0);
+			endDate = cal.getTime();
+			System.out.println("in last quarter");
+			endDate = new Date();
+			break;
+
+		default:
+			System.out.println("No time period selected");
+		}
+
+		@SuppressWarnings("unchecked")
+		TypedQuery<Object[]> query = (TypedQuery<Object[]>) em
+				.createQuery(
+						"SELECT m.type_, SUM(m.volume) FROM Market as m WHERE m.id.x_Date between :startDate AND :endDate GROUP BY m.type_")
+				.setParameter("startDate", startDate, TemporalType.DATE)
+				.setParameter("endDate", endDate, TemporalType.DATE);
+
+		List<Object[]> list = query.getResultList();
+
+		System.out.println(list.size());
+		
+		List<TypeAndSumOfVolume> t = new ArrayList<TypeAndSumOfVolume>();
+		
+		return t;
+	}
+	
+	public StockInfo getStockInfo(String ticker){
+		StockInfo stockInfo = new StockInfo();
+		
+		TypedQuery<Market[]> query = (TypedQuery<Market[]>) em.createQuery("SELECT m from Market as m" 
+	            + "where m.date = :date and m.id.ticker =:ticker"
+	            );
+
+	        query1.setParameter("date", 20101105);
+	        query1.setParameter("ticker", ticker);
+	        List<Market> infoList = query1.getResultList();
+		
+		return stockInfo;
+	}
+
+	public long dateToSerial(Date ob1, Date ob2) {
+		long difference = ob2.getTime() - ob1.getTime();
+		long diffInDays = difference / (1000 * 60 * 60 * 24);
+		System.out.println(diffInDays);
+		return diffInDays;
+
+	}
+}

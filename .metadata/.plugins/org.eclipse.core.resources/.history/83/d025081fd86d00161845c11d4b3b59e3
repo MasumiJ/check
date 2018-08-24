@@ -1,0 +1,20 @@
+package market.dataanalysistool.jpa;
+
+import java.util.Date;
+
+public class CloseValueAndDate {
+	double close_;
+	Date x_Date;
+	public double getClose_() {
+		return close_;
+	}
+	public void setClose_(double close_) {
+		this.close_ = close_;
+	}
+	public Date getX_Date() {
+		return x_Date;
+	}
+	public void setX_Date(Date x_Date) {
+		this.x_Date = x_Date;
+	}
+}

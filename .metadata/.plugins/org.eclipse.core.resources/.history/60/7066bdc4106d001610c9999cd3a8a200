@@ -1,0 +1,52 @@
+package market.dataanalysistool.web;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.enterprise.context.RequestScoped;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+
+import market.dataanalysistool.ejb.PeriodOfTime;
+import market.dataanalysistool.ejb.StockDataLocal;
+import market.dataanalysistool.ejb.StockStdAndPoorSessionBeanLocal;
+import market.dataanalysistool.jpa.MarketPK;
+import market.dataanalysistool.jpa.Sample;
+
+@RequestScoped
+@Path("/stdandpoor")
+@Produces({"application/xml", "application/json"})
+@Consumes({"application/xml", "application/json"})
+public class StdAndPoorResource {
+	
+	StockStdAndPoorSessionBeanLocal bean;
+	Context context;
+	
+	public StdAndPoorResource() {
+		try {
+			context = new InitialContext();
+			bean = (StockStdAndPoorSessionBeanLocal)context.lookup("java:app/MarketDataAnalysisToolEJB/StockStdAndPoorSessionBean!market.dataanalysistool.ejb.StockStdAndPoorSessionBeanLocal");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@GET
+	@Produces("application/json")
+	public Map<Date,Double> getAllProducts(@QueryParam("filter") @DefaultValue("") String filter) {
+		MarketPK ob = new MarketPK();
+		
+		if (filter.equals("")){
+			return bean.getSimpleMovingAverages(ob,10,PeriodOfTime.YEAR);
+		}
+		return null;
+	}
+}

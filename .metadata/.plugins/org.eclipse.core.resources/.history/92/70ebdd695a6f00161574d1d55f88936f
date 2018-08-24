@@ -1,0 +1,25 @@
+package market.dataanalysistool.jpa;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+public class DataPoint implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private int date;
+	private BigDecimal yCoordinate;
+	
+	
+	public int getDate() {
+		return date;
+	}
+	public void setDate(int date) {
+		this.date = date;
+	}
+	public BigDecimal getyCoordinate() {
+		return yCoordinate;
+	}
+	public void setyCoordinate(BigDecimal yCoordinate) {
+		this.yCoordinate = yCoordinate;
+	}
+	
+}

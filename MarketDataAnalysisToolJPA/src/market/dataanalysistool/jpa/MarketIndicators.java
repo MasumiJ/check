@@ -1,0 +1,42 @@
+package market.dataanalysistool.jpa;
+
+
+public class MarketIndicators {
+	private double close_;
+	private double high_;
+	private double low_;
+	private double open_;
+	private int volume;
+	public double getClose_() {
+		return close_;
+	}
+	public void setClose_(double close_) {
+		this.close_ = close_;
+	}
+	public double getHigh_() {
+		return high_;
+	}
+	public void setHigh_(double high_) {
+		this.high_ = high_;
+	}
+	public double getLow_() {
+		return low_;
+	}
+	public void setLow_(double low_) {
+		this.low_ = low_;
+	}
+	public double getOpen_() {
+		return open_;
+	}
+	public void setOpen_(double open_) {
+		this.open_ = open_;
+	}
+	public int getVolume() {
+		return volume;
+	}
+	public void setVolume(int volume) {
+		this.volume = volume;
+	}
+	
+	
+}

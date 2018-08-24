@@ -1,0 +1,43 @@
+package market.dataanalysistool.jpa;
+
+import java.math.BigDecimal;
+
+public class MarketIndicators {
+	private BigDecimal close_;
+	private BigDecimal high_;
+	private BigDecimal low_;
+	private BigDecimal open_;
+	private int volume;
+	public BigDecimal getClose_() {
+		return close_;
+	}
+	public void setClose_(BigDecimal close_) {
+		this.close_ = close_;
+	}
+	public BigDecimal getHigh_() {
+		return high_;
+	}
+	public void setHigh_(BigDecimal high_) {
+		this.high_ = high_;
+	}
+	public BigDecimal getLow_() {
+		return low_;
+	}
+	public void setLow_(BigDecimal low_) {
+		this.low_ = low_;
+	}
+	public BigDecimal getOpen_() {
+		return open_;
+	}
+	public void setOpen_(BigDecimal open_) {
+		this.open_ = open_;
+	}
+	public int getVolume() {
+		return volume;
+	}
+	public void setVolume(int volume) {
+		this.volume = volume;
+	}
+	
+	
+}

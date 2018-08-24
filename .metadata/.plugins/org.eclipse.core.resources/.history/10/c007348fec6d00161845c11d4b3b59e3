@@ -1,0 +1,42 @@
+package market.dataanalysistool.jpa;
+
+import java.io.Serializable;
+import java.sql.Date;
+
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+public class CloseValueAndDate implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Double close_;
+	
+	@EmbeddedId
+	private Date x_Date;
+	 
+	public Double getClose_() {
+		return close_;
+	}
+
+	public void setClose_(Double close_) {
+		this.close_ = close_;
+	}
+
+	public java.util.Date getX_Date() {
+		return x_Date;
+	}
+
+	public void setX_Date(java.util.Date x_Date) {
+		this.x_Date = x_Date;
+	}
+
+	
+	
+}

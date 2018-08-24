@@ -1,0 +1,13 @@
+package market.dataanalysistool.jpa;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListOfTickers implements Serializable{
+	List<String> tickers = new ArrayList<String>();
+	
+	public List<String> getTickers(){
+		return this.tickers;
+	}
+}

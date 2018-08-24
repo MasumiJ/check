@@ -1,0 +1,12 @@
+package market.dataanalysistool.web;
+
+import javax.enterprise.context.RequestScoped;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+
+@RequestScoped
+@Path("getTickerList")
+@Produces({ "application/xml", "application/json" })
+public class getTickerList {
+
+}

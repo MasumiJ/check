@@ -1,0 +1,35 @@
+package market.dataanalysistool.jpa;
+
+public class StockInfoComplete{
+    public List<Market> getStockInfoMarket;
+    public String getStockType;
+    public BigDecimal get52WeekHigh;
+    public BigDecimal get52WeekLow;
+    
+    
+public List<Market> getGetStockInfoMarket() {
+    return getStockInfoMarket;
+}
+public void setGetStockInfoMarket(List<Market> getStockInfoMarket) {
+    this.getStockInfoMarket = getStockInfoMarket;
+}
+public String getGetStockType() {
+    return getStockType;
+}
+public void setGetStockType(String getStockType) {
+    this.getStockType = getStockType;
+}
+public BigDecimal getGet52WeekHigh() {
+    return get52WeekHigh;
+}
+public void setGet52WeekHigh(BigDecimal get52WeekHigh) {
+    this.get52WeekHigh = get52WeekHigh;
+}
+public BigDecimal getGet52WeekLow() {
+    return get52WeekLow;
+}
+public void setGet52WeekLow(BigDecimal get52WeekLow) {
+    this.get52WeekLow = get52WeekLow;
+}
+}
+Add Comment
